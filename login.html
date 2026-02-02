@@ -59,20 +59,22 @@ function login() {
         return;
     }
 
-    // Fetch registered cards
-    let cards = JSON.parse(localStorage.getItem("registeredCards")) || [];
+    // Get users database
+    let users = JSON.parse(localStorage.getItem("users")) || {};
 
-    // Duplicate card prevention
-    if (cards.includes(card)) {
-        alert("This card number is already registered");
+    // CASE 1: New user (register)
+    if (!users[card]) {
+        users[card] = name;
+        localStorage.setItem("users", JSON.stringify(users));
+    }
+    // CASE 2: Existing card but wrong name
+    else if (users[card] !== name) {
+        alert("Card number already registered with a different name");
         return;
     }
+    // CASE 3: Existing user → normal login
 
-    // Register new card
-    cards.push(card);
-    localStorage.setItem("registeredCards", JSON.stringify(cards));
-
-    // Save current user
+    // Save current session
     localStorage.setItem(
         "currentUser",
         JSON.stringify({ name, card })
@@ -84,3 +86,4 @@ function login() {
 
 </body>
 </html>
+
