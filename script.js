@@ -1,5 +1,5 @@
 const user = JSON.parse(localStorage.getItem("currentUser"));
-if (!user) window.location.href = "login.html";
+if (!user) window.location.href = "./login.html";
 
 document.getElementById("welcome").innerText =
     `Welcome ${user.name} (Card: ${user.card})`;
@@ -89,4 +89,5 @@ function loadMonthlySummary(data) {
 
 
 loadRecords();
+
 loadMonthlySummary(data);
