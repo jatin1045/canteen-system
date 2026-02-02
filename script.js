@@ -37,57 +37,69 @@ function loadRecords() {
     let total = 0;
     let rows = "";
 
-    data.sort((a, b) => new Date(a.date) - new Date(b.date));
-
     data.forEach(r => {
         total += r.bill;
         rows += `
-        <tr>
-            <td>${r.date}</td>
-            <td>${r.b ? "✔" : "✘"}</td>
-            <td>${r.l ? "✔" : "✘"}</td>
-            <td>${r.d ? "✔" : "✘"}</td>
-            <td>${r.bill}</td>
-        </tr>`;
+            <tr>
+                <td>${r.date}</td>
+                <td>${r.b ? "✔" : "✘"}</td>
+                <td>${r.l ? "✔" : "✘"}</td>
+                <td>${r.d ? "✔" : "✘"}</td>
+                <td>${r.bill}</td>
+            </tr>
+        `;
     });
 
     document.getElementById("records").innerHTML = rows;
     document.getElementById("total").innerText =
         `💰 Total Amount: ₹${total}`;
+
+    // 🔥 THIS LINE IS REQUIRED
+    loadMonthlySummary(data);
 }
+
 
 
 
 function loadMonthlySummary(data) {
-    const monthlyData = {};
+    const monthly = {};
 
-    data.forEach(r => {
-        const month = r.date.slice(0, 7); // YYYY-MM
+    data.forEach(record => {
+        if (record.bill === 0) return;
 
-        if (!monthlyData[month]) {
-            monthlyData[month] = { days: 0, total: 0 };
+        // Extract YYYY-MM
+        const month = record.date.substring(0, 7);
+
+        if (!monthly[month]) {
+            monthly[month] = {
+                days: 0,
+                total: 0
+            };
         }
 
-        if (r.bill > 0) {
-            monthlyData[month].days += 1;
-            monthlyData[month].total += r.bill;
-        }
+        monthly[month].days += 1;
+        monthly[month].total += record.bill;
     });
 
     let rows = "";
-    for (let m in monthlyData) {
+
+    for (let month in monthly) {
         rows += `
-        <tr>
-            <td>${m}</td>
-            <td>${monthlyData[m].days}</td>
-            <td>${monthlyData[m].total}</td>
-        </tr>`;
+            <tr>
+                <td>${month}</td>
+                <td>${monthly[month].days}</td>
+                <td>${monthly[month].total}</td>
+            </tr>
+        `;
     }
 
-    document.getElementById("monthly").innerHTML = rows;
+    document.getElementById("monthly").innerHTML =
+        rows || "<tr><td colspan='3'>No data</td></tr>";
 }
+
 
 
 loadRecords();
 
 loadMonthlySummary(data);
+
